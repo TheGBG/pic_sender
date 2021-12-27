@@ -1,5 +1,8 @@
 # Byte-compiled / optimized / DLL files
+images/*.jpg
 secrets.py
+export-env.sh
+*.env*
 __pycache__/
 *.py[cod]
 *$py.class
