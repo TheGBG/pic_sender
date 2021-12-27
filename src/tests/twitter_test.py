@@ -121,5 +121,5 @@ class TestTwitterCrawler:
         twitter_crawler._get_media_urls = Mock(return_value=['url1', 'url2'])
 
         with patch("builtins.open", mock_open()) as mock_file, patch.object(requests, 'get'):
-                twitter_crawler.download_image(image_name='the_name')
-                mock_file.assert_called_with('images/the_name.jpg', 'wb')
+            twitter_crawler.download_image(image_name='the_name')
+            mock_file.assert_called_with('images/the_name.jpg', 'wb')
