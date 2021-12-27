@@ -64,7 +64,7 @@ class TestTwitterCrawler:
         with patch.object(requests, 'get', return_value=response) as mock_get:
             result = twitter_crawler._get_media_urls()
             
-            assert result == ['fake_url1', 'fake_url2']
+        assert result == ['fake_url1', 'fake_url2']
 
     def get_media_urls_ko_wrong_url_test(self):
         config = test_config.TWITTER_CONFIG
@@ -76,10 +76,7 @@ class TestTwitterCrawler:
         with patch.object(requests, 'get', return_value=response) as mock_get:
             result = twitter_crawler._get_media_urls()
             
-            assert result == []
-
-        #with pytest.raises(HTTPError):
-        #    resp = get_employee(test_id)
+        assert result == []
 
     def get_media_urls_ko_request_not_200_test(self):
         config = test_config.TWITTER_CONFIG
@@ -103,7 +100,7 @@ class TestTwitterCrawler:
         with patch.object(requests, 'get', return_value=response) as mock_get:
             result = twitter_crawler._get_media_urls()
             
-            assert result == []
+        assert result == []
 
     def get_media_urls_ko_request_raises_exception_test(self):
         config = test_config.TWITTER_CONFIG
