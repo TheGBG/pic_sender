@@ -1,10 +1,10 @@
 from crawlers import RedditCrawler
-from config import config
+from config.config import REDDIT_CONFIG
 
 reddit = RedditCrawler(
-    client_id='ThuWk73bhi78WFOZ2hOY1A',
-    client_secret='a0tBZ_RBH2eq5U4KDpLKFl7GrKe3Fg',
-    user_agent='elonbrust'
+    client_id=REDDIT_CONFIG['client_id'],
+    client_secret=REDDIT_CONFIG['client_secret'],
+    user_agent=REDDIT_CONFIG['user_agent']
 )
 
 example_url = 'https://www.reddit.com/r/ProgrammingJokes/comments/rmulom/whats_on_your_christmas_list/'
