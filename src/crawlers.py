@@ -1,15 +1,11 @@
 import praw
 import os
 import requests
-import random
-import string
-from config import config
 from utils import get_random_string
 
 class RedditCrawler(praw.Reddit):
     
     # init constructor will be the one from parent class
-
     def set_post_url(self, post_url):
         self.post_url = post_url
     
@@ -26,6 +22,9 @@ class RedditCrawler(praw.Reddit):
         image_path = os.path.join(image_folder, image_name)
         
         requested_image = requests.get(image_url)
+        # Ensure that we're getting response 200
+        if not requested_image.ok:
+            print(f'Request not completed: {requested_image}')
 
         with open(image_path, 'wb') as f:
             f.write(requested_image.content)
@@ -55,13 +54,17 @@ class TwitterCrawler:
         url = f"https://api.twitter.com/2/tweets/{self.tweet_id}?expansions=attachments.media_keys&media.fields=url"
 
         try:
-            r = requests.get(url=url, headers=headers)
+            requested_image = requests.get(url=url, headers=headers)
+            
+            # Ensure that we're getting response 200
+            if not requested_image.ok:
+                print(f'Request not completed: {requested_image}')
         
         except requests.exceptions.RequestException as e:
             print(f"There was a problem with the request: {e}")
             return []
         
-        media = r.json().get("includes", {}).get("media", {})
+        media = requested_image.json().get("includes", {}).get("media", {})
         return [m["url"] for m in media] if media else []
 
     def download_image(self, image_folder='images', image_format='.jpg'):
