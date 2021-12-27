@@ -1,7 +1,7 @@
 import praw
 import os
 import requests
-from utils import get_random_string
+from app.utils import get_random_string
 
 
 class RedditCrawler(praw.Reddit):
