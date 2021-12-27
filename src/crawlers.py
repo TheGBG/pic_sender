@@ -31,7 +31,7 @@ class RedditCrawler(praw.Reddit):
             f.write(requested_image.content)
             f.close()
         
-        print(f'Iamge saved at {image_path}')
+        print(f'Image saved at {image_path}')
 
 class TwitterCrawler:
     
@@ -73,7 +73,7 @@ class TwitterCrawler:
             image_path = os.path.join(image_folder, image_name)
             image_file = requests.get(url)
 
-            with open (image_path, 'wb') as f:
+            with open(image_path, 'wb') as f:
                 f.write(image_file.content)
                 f.close()
 
