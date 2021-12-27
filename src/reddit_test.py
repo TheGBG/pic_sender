@@ -10,6 +10,7 @@ reddit = RedditCrawler(
 example_url = 'https://www.reddit.com/r/ProgrammingJokes/comments/rmulom/whats_on_your_christmas_list/'
 reddit.set_post_url(example_url)
 
+reddit.download_image(image_name='testing_reddit_name')
 reddit.download_image()
 
 

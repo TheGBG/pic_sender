@@ -8,4 +8,5 @@ twitter = TwitterCrawler(
     twitter_config=config.TWITTER_CONFIG
 )
 
+twitter.download_image(image_name='testing_twitter_name')
 twitter.download_image()
