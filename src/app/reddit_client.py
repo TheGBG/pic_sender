@@ -46,7 +46,7 @@ class RedditClient():
             - image_format (str, optional): defaults to '.jpg'.
         """
         if self._url is None:
-            self._logger.error('Please, set an url with set_post_url()')
+            self._logger.error('No URL found.')
 
         post = self._reddit_client.submission(url=self._url)
         image_url = post.url        
