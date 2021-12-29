@@ -2,21 +2,29 @@ import praw
 import os
 import requests
 from app.utils import get_random_string
+from app.logger_client import LoggerClient
 
 
-class RedditClient(praw.Reddit):
-    
-    # init constructor will be the one from parent class
-    def set_post_url(self, url:str):
+class RedditClient():
+    def __init__(self, config: dict, logger: LoggerClient, url: str):
         """
-        Sets the url of the Reddit post to scrap.
+        Initializes the client for Reddit
 
-        Arguments
-        ---------
-            - post_url (str): link to the post. Can be either the URL bar
-              link or the "share" button link. 
+        Args:
+            config (dict): dictionary containing the keys. Comes from config.
+                At the same time, config keys must be set as environment variables
+            logger (LoggerClient): instance of the logger
+            url (str): link to the reddit post
         """
         self._url = url
+        self._config = config.REDDIT_CONFIG
+        self._logger = logger
+
+        self._reddit_client = praw.Reddit(
+            client_id=self._config['client_id'],
+            client_secret=self._config['client_secret'],
+            user_agent=self._config['user_agent']
+        )
     
     def download_image(
         self,
@@ -38,16 +46,15 @@ class RedditClient(praw.Reddit):
             - image_format (str, optional): defaults to '.jpg'.
         """
         if self._url is None:
-            print('Please, set an url with set_post_url()')
-        
-        # Use parent subbmission method
-        post = super().submission(url=self._url)
+            self._logger.error('Please, set an url with set_post_url()')
+
+        post = self._reddit_client.submission(url=self._url)
         image_url = post.url        
         requested_image = requests.get(image_url)
         
         # Ensure that we're getting response 200
         if not requested_image.ok:
-            print(f'Request not completed: {requested_image}')
+            self._logger.error(f'Request not completed: {requested_image}')
 
         if image_name is None:
             image_name = get_random_string()
@@ -59,4 +66,4 @@ class RedditClient(praw.Reddit):
             f.write(requested_image.content)
             f.close()
         
-        print(f'Image saved at {image_path}')
+        self._logger.info(f'Image saved at {image_path}')
