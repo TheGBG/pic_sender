@@ -54,21 +54,23 @@ class RedditClient():
         if self._url is None:
             self._logger.error('No URL found.')
 
-        post = self._reddit_client.submission(url=self._url)
-        image_url = post.url
         
         try:
-            reddit_data = requests.get(image_url)
+            reddit_data = requests.get(self._url)
             
             # Ensure that we're getting response 200
             if reddit_data.status_code != 200:
                 self._logger.error(f'Request not completed: {tweet_data}')
                 return []
+            
+            post = self._reddit_client.submission(url=self._url)
+            image_url = post.url
         
         except requests.exceptions.RequestException as e:
             self._logger.error(f'There was a problem with the request: {e}')
             return []
 
+        
         if image_name is None:
             image_name = get_random_string()
 
