@@ -23,9 +23,10 @@ Quick twitter test:
 ```
 twitter_url = 'https://twitter.com/nocontextroyco/status/1474892716970442755'
 
-twitter = TwitterCrawler(
-    post_url=twitter_url,
-    twitter_config=test_config.TWITTER_CONFIG
+twitter = TwitterClient(
+    config=test_config.TWITTER_CONFIG
+    url=twitter_url,
+
 )
 
 twitter.download_image(image_name='testing_twitter_name')
@@ -34,7 +35,7 @@ twitter.download_image()
 
 Quick reddit test:
 ```
-reddit = RedditCrawler(
+reddit = RedditClient(
     client_id=test_config.REDDIT_CONFIG['client_id'],
     client_secret=test_config.REDDIT_CONFIG['client_secret'],
     user_agent=test_config.REDDIT_CONFIG['user_agent']

@@ -3,7 +3,7 @@ import requests
 from app.utils import get_random_string
 
 
-class TwitterCrawler:
+class TwitterClient:
     
     def __init__(self, config: dict, url: str):
         """
