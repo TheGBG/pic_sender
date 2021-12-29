@@ -16,16 +16,22 @@ class RedditClient():
             logger (LoggerClient): instance of the logger
             url (str): link to the reddit post
         """
-        self._url = url
         self._config = config.REDDIT_CONFIG
         self._logger = logger
+        self._url = url
 
         self._reddit_client = praw.Reddit(
             client_id=self._config['client_id'],
             client_secret=self._config['client_secret'],
             user_agent=self._config['user_agent']
         )
-    
+
+    def _is_reddit_url(self):
+        if 'reddit' in self._url:
+            return True
+        else:
+            self._logger.error('Not an URL Reddit')
+
     def download_image(
         self,
         image_name: str = None,
@@ -49,12 +55,19 @@ class RedditClient():
             self._logger.error('No URL found.')
 
         post = self._reddit_client.submission(url=self._url)
-        image_url = post.url        
-        requested_image = requests.get(image_url)
+        image_url = post.url
         
-        # Ensure that we're getting response 200
-        if not requested_image.ok:
-            self._logger.error(f'Request not completed: {requested_image}')
+        try:
+            reddit_data = requests.get(image_url)
+            
+            # Ensure that we're getting response 200
+            if reddit_data.status_code != 200:
+                self._logger.error(f'Request not completed: {tweet_data}')
+                return []
+        
+        except requests.exceptions.RequestException as e:
+            self._logger.error(f'There was a problem with the request: {e}')
+            return []
 
         if image_name is None:
             image_name = get_random_string()
