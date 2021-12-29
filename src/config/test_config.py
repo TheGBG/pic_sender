@@ -1,5 +1,14 @@
+import logging
+import sys
 import os
 
+
+LOG_CONFIG = {
+    'name': 'event-tracker',
+    'level': logging.DEBUG,
+    'stream_handler': logging.StreamHandler(sys.stdout),
+    'format': '%(asctime)s: %(module)s: %(levelname)s: %(message)s'
+}
 
 TWITTER_CONFIG = {
     'api_key': 'fake_key',

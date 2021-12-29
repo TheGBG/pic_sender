@@ -1,22 +1,24 @@
 import os
 import requests
 from app.utils import get_random_string
+from app.logger_client import LoggerClient
 
 
 class TwitterClient:
     
-    def __init__(self, config: dict, url: str):
+    def __init__(self, config: dict, logger: LoggerClient, url: str):
         """
-        Initializes the crawler for Twitter
+        Initializes the client for Twitter
 
         Args:
-            post_url (str): link to the tweet
-            twitter_config (dict): dictionary containing the keys. Comes from
-            config. At the same time, config keys must be set as environment
-            variables
+            config (dict): dictionary containing the keys. Comes from config.
+                At the same time, config keys must be set as environment variables
+            logger (LoggerClient): instance of the logger
+            url (str): link to the tweet
         """
         self._url = url
-        self._config = config
+        self._config = config.TWITTER_CONFIG
+        self._logger = logger
         self._tweet_id = self._get_tweet_id()
     
     def _get_tweet_id(self):
@@ -41,11 +43,11 @@ class TwitterClient:
             
             # Ensure that we're getting response 200
             if tweet_data.status_code != 200:
-                print(f'Request not completed: {tweet_data}')
+                self._logger.error(f'Request not completed: {tweet_data}')
                 return []
         
         except requests.exceptions.RequestException as e:
-            print(f"There was a problem with the request: {e}")
+            self._logger.error(f"There was a problem with the request: {e}")
             return []
         
         media = tweet_data.json().get("includes", {}).get("media", {})
@@ -83,4 +85,4 @@ class TwitterClient:
             with open(image_path, 'wb') as f:
                 f.write(image_file.content)
 
-            print(f'Image saved at {image_path}')
+            self._logger.info(f'Image saved at {image_path}')
