@@ -1,13 +1,13 @@
 import praw
 import os
 import requests
-from utils import get_random_string
+from app.utils import get_random_string
 
 
-class RedditCrawler(praw.Reddit):
+class RedditClient(praw.Reddit):
     
     # init constructor will be the one from parent class
-    def set_post_url(self, post_url:str):
+    def set_post_url(self, url:str):
         """
         Sets the url of the Reddit post to scrap.
 
@@ -16,7 +16,7 @@ class RedditCrawler(praw.Reddit):
             - post_url (str): link to the post. Can be either the URL bar
               link or the "share" button link. 
         """
-        self.post_url = post_url
+        self._url = url
     
     def download_image(
         self,
@@ -37,11 +37,11 @@ class RedditCrawler(praw.Reddit):
 
             - image_format (str, optional): defaults to '.jpg'.
         """
-        if self.post_url is None:
+        if self._url is None:
             print('Please, set an url with set_post_url()')
         
         # Use parent subbmission method
-        post = super().submission(url=self.post_url)
+        post = super().submission(url=self._url)
         image_url = post.url        
         requested_image = requests.get(image_url)
         
