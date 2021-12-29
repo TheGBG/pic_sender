@@ -64,6 +64,5 @@ class RedditClient():
         
         with open(image_path, 'wb') as f:
             f.write(requested_image.content)
-            f.close()
         
         self._logger.info(f'Image saved at {image_path}')
