@@ -1,6 +1,8 @@
 from unittest.mock import Mock
+import prawcore
 
 import requests
+import praw
 from unittest.mock import patch, mock_open
 from app.reddit_client import RedditClient
 from config import test_config
@@ -39,13 +41,12 @@ class TestRedditClient:
 
         assert result is not True
 
-    def get_download_image_ko_request_raises_exception_test(self):
+    def download_image_ko_request_raises_exception_test(self):
         config = test_config
         logger = Mock()
         url = 'https://www.reddit.com/user/ElonBrust/comments/rrggot/fake_post_to_delete/'
         
         reddit_client = RedditClient(config, logger, url)
-
 
         with patch.object(
             requests,
@@ -57,14 +58,37 @@ class TestRedditClient:
             
             assert result == []
 
+    def download_image_ko_no_image_in_post(self):
+        config = test_config
+        logger = Mock()
+        url_no_image = 'https://www.reddit.com/user/ElonBrust/comments/rrhac2/fake_post_with_no_image/'
+        
+        reddit_client = RedditClient(config, logger, url_no_image)
 
+        with patch.object(
+            praw.Reddit,
+            'submmit',
+            side_effect=prawcore.exceptions.ResponseException
+            ) as mock_get:
+            
+            result = reddit_client.download_image()
+            
+            assert result == []
 
-    def download_image_ok_test(self):
-        pass
+    def download_image_ok_no_image_in_post(self):
+        config = test_config
+        logger = Mock()
+        url = 'https://www.reddit.com/r/MechanicalKeyboards/comments/rra1u9/first_custom_mechanical_keyboard_tofu60_dz60/'
 
-    def download_image_ko_request_not_200(self):    
-        pass
+        reddit_client = RedditClient(config, logger, url)
 
-    def download_image_ko_url_not_provided(self):
-        pass
+        with patch.object(
+            requests,
+            'get',
+            side_effect=requests.exceptions.RequestException
+            ) as mock_get:
+            
+            result = reddit_client.download_image()
+            
+            assert result != []
 
