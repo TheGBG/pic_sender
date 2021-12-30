@@ -16,16 +16,22 @@ class RedditClient():
             logger (LoggerClient): instance of the logger
             url (str): link to the reddit post
         """
-        self._url = url
         self._config = config.REDDIT_CONFIG
         self._logger = logger
+        self._url = url
 
         self._reddit_client = praw.Reddit(
             client_id=self._config['client_id'],
             client_secret=self._config['client_secret'],
             user_agent=self._config['user_agent']
         )
-    
+
+    def _is_reddit_url(self):
+        if 'reddit' in self._url:
+            return True
+        else:
+            self._logger.error('Not an URL Reddit')
+
     def download_image(
         self,
         image_name: str = None,
@@ -48,13 +54,25 @@ class RedditClient():
         if self._url is None:
             self._logger.error('No URL found.')
 
-        post = self._reddit_client.submission(url=self._url)
-        image_url = post.url        
-        requested_image = requests.get(image_url)
+        try:
+            reddit_data = requests.get(self._url)
+
+            # Ensure that we're getting response 200
+            if reddit_data.status_code != 200:
+                self._logger.error(f'Request not completed: {reddit_data}')
+                return []
+            
+            post = self._reddit_client.submission(url=self._url)
+            image_url = post.url
         
-        # Ensure that we're getting response 200
-        if not requested_image.ok:
-            self._logger.error(f'Request not completed: {requested_image}')
+        except requests.exceptions.RequestException as e:
+            self._logger.error(f'There was a problem with the request: {e}')
+            return []
+
+        # Verify that the post has an image
+        if '.jpg' not in image_url:
+            self._logger.error('The post does not contain an image')
+            return []
 
         if image_name is None:
             image_name = get_random_string()
@@ -63,6 +81,6 @@ class RedditClient():
         image_path = os.path.join(image_folder, image_filename)
         
         with open(image_path, 'wb') as f:
-            f.write(requested_image.content)
+            f.write(reddit_data.content)
         
         self._logger.info(f'Image saved at {image_path}')
