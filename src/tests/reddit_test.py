@@ -104,7 +104,7 @@ class TestRedditClient:
 
             assert result == []
 
-    def download_image_ko_no_image_in_post_test(self):
+    def download_image_ok_test(self):
         config = test_config
         logger = Mock()
         url_no_image = 'https://www.reddit.com/user/ElonBrust/comments/rrhac2/fake_post_with_no_image/'
