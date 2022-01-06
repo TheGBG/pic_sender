@@ -58,37 +58,77 @@ class TestRedditClient:
             
             assert result == []
 
-    def download_image_ko_no_image_in_post(self):
+    def download_image_ko_status_code_not_200_test(self):
         config = test_config
         logger = Mock()
-        url_no_image = 'https://www.reddit.com/user/ElonBrust/comments/rrhac2/fake_post_with_no_image/'
+        url_no_image = 'https://www.reddit.com/user/ElonBrust/comments/rrhac2/invalid_url/'
         
         reddit_client = RedditClient(config, logger, url_no_image)
 
+        expected_response = requests.Response()
+        expected_response.status_code = 400
+
         with patch.object(
-            praw.Reddit,
-            'submmit',
-            side_effect=prawcore.exceptions.ResponseException
+            requests,
+            'get',
+            return_value=expected_response
             ) as mock_get:
             
             result = reddit_client.download_image()
             
             assert result == []
 
-    def download_image_ok_no_image_in_post(self):
+    def download_image_ko_no_image_in_post_test(self):
         config = test_config
         logger = Mock()
-        url = 'https://www.reddit.com/r/MechanicalKeyboards/comments/rra1u9/first_custom_mechanical_keyboard_tofu60_dz60/'
+        url_no_image = 'https://www.reddit.com/user/ElonBrust/comments/rrhac2/fake_post_with_no_image/'
+        
+        reddit_client = RedditClient(config, logger, url_no_image)
 
-        reddit_client = RedditClient(config, logger, url)
+        expected_response = requests.Response()
+        expected_response.status_code = 200
 
+        # Aquí tienes que patchear tanto get como el submission
         with patch.object(
             requests,
             'get',
-            side_effect=requests.exceptions.RequestException
-            ) as mock_get:
+            return_value=expected_response
+            ) as mock_get, patch.object(
+            praw.Reddit,
+            'submission',
+            ) as mock_sub:
             
+            # Y aquí pseudo-patcheamos el .url xd
+            mock_sub.return_value.url = 'some_image_url_with_no_._j_p_g'
             result = reddit_client.download_image()
-            
-            assert result != []
 
+            assert result == []
+
+    def download_image_ok_test(self):
+        config = test_config
+        logger = Mock()
+        url_no_image = 'https://www.reddit.com/user/ElonBrust/comments/rrhac2/fake_post_with_no_image/'
+        
+        reddit_client = RedditClient(config, logger, url_no_image)
+
+        expected_response = requests.Response()
+        expected_response.status_code = 200
+
+        # Aquí tienes que patchear tanto get como submission como open (se va complicando)
+        with patch.object(
+            requests,
+            'get',
+            return_value=expected_response
+            ) as mock_get, patch.object(
+            praw.Reddit,
+            'submission',
+            ) as mock_sub, patch(
+            "builtins.open", 
+            mock_open()
+            ) as mock_file:
+            
+            # Y aquí pseudo-patcheamos el .url
+            mock_sub.return_value.url = 'some_image_url_with.jpg'
+            result = reddit_client.download_image(image_name='the_name')
+
+            mock_file.assert_called_with('images/the_name.jpg', 'wb')
