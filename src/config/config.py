@@ -21,3 +21,7 @@ REDDIT_CONFIG = {
     'client_secret': os.environ["REDDIT_CLIENT_SECRET"],
     'user_agent': os.environ["REDDIT_USER_AGENT"]
 }
+
+TELEGRAM_CONFIG = {
+    'bot_token': os.environ["TELEGRAM_BOT_TOKEN"]
+}
