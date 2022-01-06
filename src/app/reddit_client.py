@@ -64,7 +64,8 @@ class RedditClient():
             
             post = self._reddit_client.submission(url=self._url)
             image_url = post.url
-        
+            image_data = requests.get(image_url)  
+
         except requests.exceptions.RequestException as e:
             self._logger.error(f'There was a problem with the request: {e}')
             return []
@@ -81,6 +82,6 @@ class RedditClient():
         image_path = os.path.join(image_folder, image_filename)
         
         with open(image_path, 'wb') as f:
-            f.write(reddit_data.content)
+            f.write(image_data.content)
         
         self._logger.info(f'Image saved at {image_path}')
