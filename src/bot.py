@@ -50,6 +50,7 @@ def echo(update: Update, context: CallbackContext) -> None:
 
     input_message = update.message.text
     chat_id = update.message.chat_id
+    message_id = update.message.message_id
     
     image_name = 'downloaded_image'
     image_folder = 'images'
@@ -70,6 +71,7 @@ def echo(update: Update, context: CallbackContext) -> None:
         
         update.message.bot.send_photo(
         chat_id=chat_id,
+        reply_to_message_id = message_id,
         photo=open(image_path, 'rb')
         )
         
@@ -90,6 +92,7 @@ def echo(update: Update, context: CallbackContext) -> None:
         
         update.message.bot.send_photo(
         chat_id=chat_id,
+        reply_to_message_id = message_id,
         photo=open(image_path, 'rb')
         )
 
