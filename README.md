@@ -33,3 +33,9 @@ source venv/bin/activate
 pip install -r requirements.txt
 pytest --cov
 ```
+
+To test the bot:
+
+```
+python src/bot.py
+```
