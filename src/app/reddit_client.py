@@ -35,8 +35,7 @@ class RedditClient():
     def download_image(
         self,
         image_name: str = None,
-        image_folder: str = 'images',
-        image_format: str = '.jpg'
+        image_folder: str = 'images'
     ):
         """
         Downloads and save the image harvested from the reddit post
