@@ -46,16 +46,15 @@ def help_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Help!')
 
 
-def echo(update: Update, context: CallbackContext) -> None:
+def send_pictures(update: Update, context: CallbackContext) -> None:
 
     input_message = update.message.text
     chat_id = update.message.chat_id
     message_id = update.message.message_id
     
-    image_name = 'downloaded_image'
     image_folder = 'images'
 
-
+    # Download images using clients
     if 'reddit' in input_message:
     
         reddit_client = RedditClient(
@@ -64,20 +63,7 @@ def echo(update: Update, context: CallbackContext) -> None:
             url=input_message
         )
         
-        reddit_client.download_image(image_name)  # TODO: split download and save?
-        
-        # DANGER: format must come from the class, not hardcoded
-        image_path = os.path.join(image_folder, image_name + reddit_client._image_format)
-        
-        update.message.bot.send_photo(
-        chat_id=chat_id,
-        reply_to_message_id = message_id,
-        photo=open(image_path, 'rb')
-        )
-        
-        os.remove(image_path)
-        logger.info('Image removed')
-
+        reddit_client.download_image('testing')  # TODO: split download and save?
 
     if 'twitter' in input_message:
         twitter_client = TwitterClient(
@@ -85,21 +71,32 @@ def echo(update: Update, context: CallbackContext) -> None:
             logger=logger,
             url=input_message
         )
-
-        twitter_client.download_image(image_name)
-        image_path = os.path.join(image_folder, image_name + '.jpg')
         
-        
-        update.message.bot.send_photo(
-        chat_id=chat_id,
-        reply_to_message_id = message_id,
-        photo=open(image_path, 'rb')
-        )
+        twitter_client.download_image()
 
-        os.remove(image_path)
-        logger.info('Image removed')
+    # Load and send images
+    images = [
+        name for name in os.listdir(image_folder) 
+                       if name != 'placeholder'
+        ]
 
-
+    # Make sure that there's any file
+    if images:
+        for image in images:
+            
+            image_path = os.path.join(image_folder, image)
+            photo = open(image_path, 'rb')
+            
+            update.message.bot.send_photo(
+                chat_id=chat_id,
+                reply_to_message_id=message_id,
+                photo=photo
+                )
+                
+            os.remove(image_path)
+            logger.info('Image removed')
+    else:
+        logger.info('Image not found')
     
 
 
@@ -115,7 +112,8 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("help", help_command))
 
     # on non command i.e message - echo the message on Telegram
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, send_pictures))
+
 
     # Start the Bot
     updater.start_polling()

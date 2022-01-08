@@ -55,9 +55,7 @@ class TwitterClient:
 
     def download_image(
         self,
-        image_name: str = None,
-        image_folder: str = 'images',
-        image_format: str = '.jpg'
+        image_folder: str = 'images'
     ):
         """
         Downloads and save image(s) harvested from the tweet
@@ -74,11 +72,11 @@ class TwitterClient:
         """
         media_urls = self._get_media_urls()
         for url in media_urls:
-            # Gather elements for image saving, save and print feedback
-            if image_name is None:
-                image_name = get_random_string()
-            
-            image_filename = f'{image_name}{image_format}'
+
+            # Use the last part of the url as filename. It contains 
+            # info about the format
+            image_filename = url.split('/')[-1]
+
             image_path = os.path.join(image_folder, image_filename)
             image_file = requests.get(url)
 
