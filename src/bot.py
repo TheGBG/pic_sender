@@ -54,6 +54,10 @@ def send_pictures(update: Update, context: CallbackContext) -> None:
     
     image_folder = 'images'
 
+    # TODO create only once
+    if not os.path.exists(image_folder):
+        os.mkdir(image_folder)
+
     # Download images using clients
     if 'reddit' in input_message:
     

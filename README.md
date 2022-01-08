@@ -39,3 +39,11 @@ To test the bot:
 ```
 python src/bot.py
 ```
+
+To build and run on Docker:
+
+```
+cd pic_sender
+docker build -t pic_sender .
+docker run --rm --env-file .env pic_sender
+```
