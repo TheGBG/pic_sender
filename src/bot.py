@@ -67,7 +67,7 @@ def echo(update: Update, context: CallbackContext) -> None:
         reddit_client.download_image(image_name)  # TODO: split download and save?
         
         # DANGER: format must come from the class, not hardcoded
-        image_path = os.path.join(image_folder, image_name + '.jpg')
+        image_path = os.path.join(image_folder, image_name + reddit_client._image_format)
         
         update.message.bot.send_photo(
         chat_id=chat_id,

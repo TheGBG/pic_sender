@@ -64,24 +64,30 @@ class RedditClient():
             
             post = self._reddit_client.submission(url=self._url)
             image_url = post.url
-            image_data = requests.get(image_url)  
+            image_data = requests.get(image_url)
+            self._logger.info(f'Link is {image_url}') 
 
         except requests.exceptions.RequestException as e:
             self._logger.error(f'There was a problem with the request: {e}')
             return []
 
         # Verify that the post has an image
-        if '.jpg' not in image_url:
+        image_format = '.' + image_url.split('.')[-1]
+        self._image_format = image_format
+        self._logger.info(f'image format is {image_format}')
+
+        if image_format not in ['.jpg', '.png']:
             self._logger.error('The post does not contain an image')
             return []
+
+        else:
+            image_filename = f'{image_name}{image_format}' 
+            image_path = os.path.join(image_folder, image_filename)
+            with open(image_path, 'wb') as f:
+                f.write(image_data.content)
+
 
         if image_name is None:
             image_name = get_random_string()
 
-        image_filename = f'{image_name}{image_format}' 
-        image_path = os.path.join(image_folder, image_filename)
-        
-        with open(image_path, 'wb') as f:
-            f.write(image_data.content)
-        
         self._logger.info(f'Image saved at {image_path}')
