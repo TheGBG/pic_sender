@@ -21,14 +21,13 @@ class Container:
         self._image_maker = ImageMaker(config=config, logger=self._logger)
 
     def start(self):
-        #self._twitter_client.download_image(image_name='testing_twitter_name')
+        self._twitter_client.download_image(image_name='testing_twitter_name')
         self._twitter_client.download_image()
 
-        #self._reddit_client.download_image(image_name='testing_reddit_name')
+        self._reddit_client.download_image(image_name='testing_reddit_name')
         self._reddit_client.download_image()
 
-        self._image_maker.create_image('this-is-a-test', 1000)
-        self._image_maker.create_image('E', 1)
+        self._image_maker.create_image('this', "99")
  
 
 if __name__ == '__main__':

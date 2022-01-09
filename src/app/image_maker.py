@@ -10,13 +10,13 @@ class ImageMaker():
         self._logger = logger
 
     def create_image(self, text, level):
-        text = text[:10].center(10, ' ').upper()
+        text = text[:8].center(8, ' ').upper()
         level = self._get_level(level)
         if not level:
             return None  # Fallo, algun listo le ha pasado string
 
         exp_image = Image.open(os.path.join(self._config['media_folder'], 'background.jpg'))
-        font = ImageFont.truetype(os.path.join(self._config['media_folder'], 'Motor.ttf'), 45)
+        font = ImageFont.truetype(os.path.join(self._config['media_folder'], 'Motor.ttf'), 55)
 
         image_editable = ImageDraw.Draw(exp_image)
         image_editable.text((14,60), f'{text} {level}', (237, 230, 211), font=font)
@@ -32,8 +32,8 @@ class ImageMaker():
 
         level = self._cap_num(level)
         if isinstance(level, float):
-            return str("{:.2f}".format(level)).center(7, ' ')
-        return str(level).center(7, ' ')
+            return str("{:.2f}".format(level)).ljust(6, ' ')
+        return str(level).ljust(6, ' ')
 
     def _is_num(self, level):
         try:
@@ -47,9 +47,9 @@ class ImageMaker():
             return None
 
     def _cap_num(self, level):
-        if level >= 1000:
-            return 999.99
-        elif level <= -1000:
-            return -999.99
+        if level > 100:
+            return 100
+        elif level < -100:
+            return -100
         else:
             return level
