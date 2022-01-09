@@ -1,7 +1,7 @@
 import praw
 import os
 import requests
-from app.utils import get_random_string
+from app.utils import extract_filename
 from app.logger_client import LoggerClient
 
 
@@ -67,6 +67,7 @@ class RedditClient():
         
         n_of_files = len(gallery_urls)
         self._logger.info(f'About to request {n_of_files} file(s)')
+        
         # Request those links and save the content
         for url in gallery_urls:
             
@@ -82,10 +83,9 @@ class RedditClient():
                 self._logger.error(f'There was a problem with the request: {e}')
                 return []
 
-            filename = url.split('/')[-1]  # TODO: extract this to a utils
-                                           # function after merged
-
+            filename = extract_filename(url)
             filepath = os.path.join(self._image_folder, filename)
+            
             with open(filepath, 'wb') as f:
                 f.write(requested_file.content)
                 self._logger.info(f'File saved at {filepath}')
