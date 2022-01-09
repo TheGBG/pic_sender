@@ -55,14 +55,19 @@ class RedditClient():
 
         # Get the links to which we're going to request
         post = self._reddit_client.submission(url=self._url)
-
-        gallery_urls = []
         
-        for item in post.media_metadata.items():
-            item_url = item[1]['p'][0]['u']
-            item_url = item_url.split("?")[0].replace("preview", "i")
-            
-            gallery_urls.append(item_url)
+        gallery_urls = []
+
+        # Check if the post is multifile or not
+        if not hasattr(post, 'media_metadata'):
+            gallery_urls.append(post.url)
+
+        else:
+            for item in post.media_metadata.items():
+                item_url = item[1]['p'][0]['u']
+                item_url = item_url.split("?")[0].replace("preview", "i")
+                
+                gallery_urls.append(item_url)
         
         
         n_of_files = len(gallery_urls)
