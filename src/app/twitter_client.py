@@ -20,6 +20,7 @@ class TwitterClient:
         self._config = config.TWITTER_CONFIG
         self._logger = logger
         self._tweet_id = self._get_tweet_id()
+        self._image_folder = config.TWITTER_CONFIG['image_folder']
     
     def _get_tweet_id(self):
         if '/' not in self._url:
@@ -53,22 +54,9 @@ class TwitterClient:
         media = tweet_data.json().get("includes", {}).get("media", {})
         return [m["url"] for m in media] if media else []
 
-    def download_image(
-        self,
-        image_folder: str = 'images'
-    ):
+    def download_image(self):
         """
-        Downloads and save image(s) harvested from the tweet
-
-        Arguments
-        ---------
-            - image_name: (str, optional): name for the image. When `None`, a
-              random string will be set as name.
-
-            - image_folder (str, optional): where to store the images.
-              Defaults to 'images'.
-
-            - image_format (str, optional): defaults to '.jpg'.
+        Downloads and save files(s) harvested from the tweet (images and videos)
         """
         media_urls = self._get_media_urls()
         for url in media_urls:
@@ -77,10 +65,10 @@ class TwitterClient:
             # info about the format
             image_filename = url.split('/')[-1]
 
-            image_path = os.path.join(image_folder, image_filename)
+            image_path = os.path.join(self._image_folder, image_filename)
             image_file = requests.get(url)
 
             with open(image_path, 'wb') as f:
                 f.write(image_file.content)
 
-            self._logger.info(f'Image saved at {image_path}')
+            self._logger.info(f'File saved at {image_path}')

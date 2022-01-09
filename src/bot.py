@@ -52,7 +52,7 @@ def send_pictures(update: Update, context: CallbackContext) -> None:
     chat_id = update.message.chat_id
     message_id = update.message.message_id
     
-    image_folder = 'images'
+    image_folder = config.GLOBAL_CONFIG['image_folder']
 
     # TODO create only once
     if not os.path.exists(image_folder):

@@ -26,6 +26,8 @@ class RedditClient():
             user_agent=self._config['user_agent']
         )
 
+        self._image_folder = config.REDDIT_CONFIG["image_folder"]
+
     def _is_reddit_url(self):
         if 'reddit' in self._url:
             return True
@@ -34,9 +36,7 @@ class RedditClient():
 
     def download_image(
         self,
-        image_name: str = None,
-        image_folder: str = 'images'
-    ):
+        image_name: str = None):
         """
         Downloads and save the image harvested from the reddit post
 
@@ -72,6 +72,7 @@ class RedditClient():
 
         # Verify that the post has an image
         image_format = '.' + image_url.split('.')[-1]
+
         self._image_format = image_format
         self._logger.info(f'image format is {image_format}')
 
@@ -81,7 +82,7 @@ class RedditClient():
 
         else:
             image_filename = f'{image_name}{image_format}' 
-            image_path = os.path.join(image_folder, image_filename)
+            image_path = os.path.join(self._image_folder, image_filename)
             with open(image_path, 'wb') as f:
                 f.write(image_data.content)
 
