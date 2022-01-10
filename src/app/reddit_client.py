@@ -1,7 +1,7 @@
 import praw
 import os
 import requests
-from app.utils import get_random_string
+from app.utils import extract_filename
 from app.logger_client import LoggerClient
 
 
@@ -34,21 +34,9 @@ class RedditClient():
         else:
             self._logger.error('Not an URL Reddit')
 
-    def download_image(
-        self,
-        image_name: str = None):
+    def download_image(self):
         """
-        Downloads and save the image harvested from the reddit post
-
-        Arguments
-        ---------
-            - image_name: (str, optional): name for the image. When `None`, a
-              random string will be set as name.
-
-            - image_folder (str, optional): where to store the images.
-              Defaults to 'images'.
-
-            - image_format (str, optional): defaults to '.jpg'.
+        Downloads and saves file(s) harvested from the reddit post
         """
         if self._url is None:
             self._logger.error('No URL found.')
@@ -60,34 +48,49 @@ class RedditClient():
             if reddit_data.status_code != 200:
                 self._logger.error(f'Request not completed: {reddit_data}')
                 return []
-            
-            post = self._reddit_client.submission(url=self._url)
-            image_url = post.url
-            image_data = requests.get(image_url)
-            self._logger.info(f'Link is {image_url}') 
 
         except requests.exceptions.RequestException as e:
             self._logger.error(f'There was a problem with the request: {e}')
             return []
 
-        # Verify that the post has an image
-        image_format = '.' + image_url.split('.')[-1]
+        # Get the links to which we're going to request
+        post = self._reddit_client.submission(url=self._url)
+        
+        gallery_urls = []
 
-        self._image_format = image_format
-        self._logger.info(f'image format is {image_format}')
-
-        if image_format not in ['.jpg', '.png']:
-            self._logger.error('The post does not contain an image')
-            return []
+        # Check if the post is multifile or not
+        if not hasattr(post, 'media_metadata'):
+            gallery_urls.append(post.url)
 
         else:
-            image_filename = f'{image_name}{image_format}' 
-            image_path = os.path.join(self._image_folder, image_filename)
-            with open(image_path, 'wb') as f:
-                f.write(image_data.content)
+            for item in post.media_metadata.items():
+                item_url = item[1]['p'][0]['u']
+                item_url = item_url.split("?")[0].replace("preview", "i")
+                
+                gallery_urls.append(item_url)
+        
+        
+        n_of_files = len(gallery_urls)
+        self._logger.info(f'About to request {n_of_files} file(s)')
+        
+        # Request those links and save the content
+        for url in gallery_urls:
+            
+            # First make sure we get the content
+            try:
+                requested_file = requests.get(url)
 
+                if reddit_data.status_code != 200:
+                    self._logger.error(f'Request not completed: {reddit_data}')
+                    return []
 
-        if image_name is None:
-            image_name = get_random_string()
+            except requests.exceptions.RequestException as e:
+                self._logger.error(f'There was a problem with the request: {e}')
+                return []
 
-        self._logger.info(f'Image saved at {image_path}')
+            filename = extract_filename(url)
+            filepath = os.path.join(self._image_folder, filename)
+            
+            with open(filepath, 'wb') as f:
+                f.write(requested_file.content)
+                self._logger.info(f'File saved at {filepath}')

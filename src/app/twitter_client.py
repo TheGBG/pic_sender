@@ -1,6 +1,6 @@
 import os
 import requests
-from app.utils import get_random_string
+from app.utils import extract_filename
 from app.logger_client import LoggerClient
 
 
@@ -63,7 +63,7 @@ class TwitterClient:
 
             # Use the last part of the url as filename. It contains 
             # info about the format
-            image_filename = url.split('/')[-1]
+            image_filename = extract_filename(url)
 
             image_path = os.path.join(self._image_folder, image_filename)
             image_file = requests.get(url)

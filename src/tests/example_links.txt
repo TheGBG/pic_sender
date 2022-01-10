@@ -1,0 +1,8 @@
+twitter_single_photo = https://twitter.com/nocontextroyco/status/1474892716970442755
+reddit_single_photo = https://www.reddit.com/r/StoicMemes/comments/rx8knp/stoike/?utm_medium=android_app&utm_source=share
+
+twitter_multiple_photo = https://twitter.com/GingerSlim/status/1477708275550494721?s=20
+reddit_multiple_photo = https://www.reddit.com/r/SkincareAddiction/comments/ryipd8/ba_after_2_years_of_barrier_care_sunscreen_and/
+
+twitter_single_video = https://twitter.com/javisanchezglez/status/1479553149069369345
+reddit_single_video = 

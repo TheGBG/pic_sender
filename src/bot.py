@@ -67,7 +67,7 @@ def send_pictures(update: Update, context: CallbackContext) -> None:
             url=input_message
         )
         
-        reddit_client.download_image('testing')  # TODO: split download and save?
+        reddit_client.download_image()  # TODO: split download and save?
 
     if 'twitter' in input_message:
         twitter_client = TwitterClient(
@@ -96,6 +96,8 @@ def send_pictures(update: Update, context: CallbackContext) -> None:
                 reply_to_message_id=message_id,
                 photo=photo
                 )
+            
+            logger.info('File sent')
                 
             os.remove(image_path)
             logger.info('Image removed')
