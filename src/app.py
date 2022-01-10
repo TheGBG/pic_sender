@@ -25,7 +25,7 @@ class Container:
     def start(self):
         self._twitter_client.download_image()
         self._reddit_client.download_image('reddit_test')
-        self._image_maker.create_image('this', "99")
+        self._image_maker.create_image('th76_ is', "99")
  
 
 if __name__ == '__main__':

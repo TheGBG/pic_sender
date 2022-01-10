@@ -1,4 +1,5 @@
 import os
+import re
 
 from app.logger_client import LoggerClient
 from app.utils import get_random_string
@@ -18,9 +19,9 @@ class ImageMaker():
             os.mkdir(self._image_folder)
 
     def create_image(self, text, level):
-        text = text[:8].center(8, ' ').upper()
+        text = self._get_text(text)
         level = self._get_level(level)
-        if not level:
+        if not level or not text:
             return None  # Fallo, algun listo le ha pasado string
 
         exp_image = Image.open(os.path.join(self._media_folder, 'background.jpg'))
@@ -44,6 +45,14 @@ class ImageMaker():
         if isinstance(level, float):
             return str("{:.2f}".format(level)).ljust(6, ' ')
         return str(level).ljust(6, ' ')
+
+    def _get_text(self, text):
+        pattern = re.compile('[\W_]+', re.UNICODE)
+        text = pattern.sub('', text)
+
+        if len(text) == 0:
+            return None
+        return text[:8].center(8, ' ').upper()
 
     def _is_number(self, level):
         try:
