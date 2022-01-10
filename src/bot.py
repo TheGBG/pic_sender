@@ -1,34 +1,16 @@
-import logging
 import os
 from config import config
 
 from app.twitter_client import TwitterClient
 from app.reddit_client import RedditClient
 from app.image_maker import ImageMaker
-
-from telegram import Update
-from telegram.ext import (
-    Updater,
-    CommandHandler,
-    MessageHandler,
-    Filters,
-    CallbackContext,
-)
-
-TOKEN = config.TELEGRAM_CONFIG["bot_token"]
-
-
-import logging
+from app.logger_client import LoggerClient
 
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
-# Enable logging
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
-)
-
-logger = logging.getLogger(__name__)
+TOKEN = config.TELEGRAM_CONFIG["bot_token"]
+logger = LoggerClient(config).get_logger()
 
 
 # Define a few command handlers. These usually take the two arguments update and
@@ -47,25 +29,24 @@ def help_command(update: Update, context: CallbackContext) -> None:
 
 def expendable_level(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /explevel is issued."""
-    if len(context.args) == 2:
-        image_maker = ImageMaker(
-            config=config,
-            logger=logger,
-        )
-        image_path = image_maker.create_image(context.args[0], context.args[1])
-        if not image_path:
-            return 
+    if not len(context.args) == 2:
+        logger.info('Incorrect number of arguments in /explevel command')
 
-        photo = open(image_path, 'rb')
-            
-        update.message.bot.send_photo(
-            chat_id=update.message.chat_id,
-            reply_to_message_id=update.message.message_id,
-            photo=photo
-        )
-            
-        os.remove(image_path)
-        logger.info('Image removed')
+    image_maker = ImageMaker(config=config, logger=logger)
+    image_path = image_maker.create_image(context.args[0], context.args[1])
+    if not image_path:
+        return 
+
+    photo = open(image_path, 'rb')
+        
+    update.message.bot.send_photo(
+        chat_id=update.message.chat_id,
+        reply_to_message_id=update.message.message_id,
+        photo=photo
+    )
+        
+    os.remove(image_path)
+    logger.info('Image removed')
 
 def send_pictures(update: Update, context: CallbackContext) -> None:
 
