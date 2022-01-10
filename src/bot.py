@@ -2,7 +2,6 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-from prawcore.exceptions import Redirect
 from config import config
 
 from app.twitter_client import TwitterClient
