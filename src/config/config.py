@@ -13,7 +13,6 @@ LOG_CONFIG = {
 GLOBAL_CONFIG =  {
     'image_folder': 'images',
     'media_folder': 'media',
-    'expendable_images_folder': os.path.join('images', 'expendable_level'),
 }
 
 TWITTER_CONFIG = {
@@ -33,7 +32,7 @@ REDDIT_CONFIG = {
 IMAGE_MAKER_CONFIG = {
     'media_folder': GLOBAL_CONFIG["media_folder"],
     'image_folder': GLOBAL_CONFIG["image_folder"],
-    'expendable_images_folder': GLOBAL_CONFIG["expendable_images_folder"]
+    'expendable_images_folder': os.path.join(GLOBAL_CONFIG["image_folder"], 'expendable_level')
 }
 
 TELEGRAM_CONFIG = {
