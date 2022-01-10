@@ -10,6 +10,5 @@ RUN pip3 install -r requirements.txt
 WORKDIR /app
 
 ADD src /app
-ADD images /app/images
 
 ENTRYPOINT ["python3", "bot.py"]
