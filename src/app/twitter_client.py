@@ -6,7 +6,7 @@ from app.logger_client import LoggerClient
 
 class TwitterClient:
     
-    def __init__(self, config: dict, logger: LoggerClient, url: str):
+    def __init__(self, config: dict, logger: LoggerClient):
         """
         Initializes the client for Twitter
 
@@ -16,12 +16,25 @@ class TwitterClient:
             logger (LoggerClient): instance of the logger
             url (str): link to the tweet
         """
-        self._url = url
         self._config = config.TWITTER_CONFIG
         self._logger = logger
-        self._tweet_id = self._get_tweet_id()
-        self._image_folder = config.TWITTER_CONFIG['image_folder']
+        
+        self._url = None
+        self._tweet_id = None
+
+        self._image_folder = self._config['image_folder']
+        if not os.path.exists(self._image_folder):
+            os.mkdir(self._image_folder)
     
+    @property
+    def url(self):
+        return self._url
+
+    @url.setter
+    def url(self, value):
+        self._url = value
+        self._tweet_id = self._get_tweet_id()
+
     def _get_tweet_id(self):
         if '/' not in self._url:
             return None

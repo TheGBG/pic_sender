@@ -45,5 +45,5 @@ To build and run on Docker:
 ```
 cd pic_sender
 docker build -t pic_sender .
-docker run --rm --env-file .env pic_sender
+docker run --rm --env-file src/config/.env pic_sender
 ```

@@ -6,7 +6,7 @@ from app.logger_client import LoggerClient
 
 
 class RedditClient():
-    def __init__(self, config: dict, logger: LoggerClient, url: str):
+    def __init__(self, config: dict, logger: LoggerClient):
         """
         Initializes the client for Reddit
 
@@ -18,7 +18,7 @@ class RedditClient():
         """
         self._config = config.REDDIT_CONFIG
         self._logger = logger
-        self._url = url
+        self._url = None
 
         self._reddit_client = praw.Reddit(
             client_id=self._config['client_id'],
@@ -26,7 +26,17 @@ class RedditClient():
             user_agent=self._config['user_agent']
         )
 
-        self._image_folder = config.REDDIT_CONFIG["image_folder"]
+        self._image_folder = self._config["image_folder"]
+        if not os.path.exists(self._image_folder):
+            os.mkdir(self._image_folder)
+
+    @property
+    def url(self):
+        return self._url
+
+    @url.setter
+    def url(self, value):
+        self._url = value
 
     def _is_reddit_url(self):
         if 'reddit' in self._url:
@@ -48,6 +58,11 @@ class RedditClient():
             if reddit_data.status_code != 200:
                 self._logger.error(f'Request not completed: {reddit_data}')
                 return []
+            
+            post = self._reddit_client.submission(url=self._url)
+            image_url = post.url
+            image_data = requests.get(image_url)
+            self._logger.debug(f'Link is {image_url}') 
 
         except requests.exceptions.RequestException as e:
             self._logger.error(f'There was a problem with the request: {e}')
