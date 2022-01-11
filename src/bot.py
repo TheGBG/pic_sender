@@ -64,7 +64,7 @@ def send_pictures(update: Update, context: CallbackContext) -> None:
     # TODO: If message is not just an url but an url + some text this might fail
     if 'reddit' in input_message:
         reddit_client.url = input_message 
-        reddit_client.download_image('testing')  # TODO: split download and save?
+        reddit_client.download_image()
 
     if 'twitter' in input_message:
         twitter_client.url = input_message
