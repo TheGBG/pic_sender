@@ -1,12 +1,9 @@
 # pic_sender
 
-How should we start?
-
-1. We need a way to download an image, given a
-link. This link can be either Reddit or Twitter
-2. Create a Telegram bot that uses that code to
-download the image, and then send it to a chat
-3. Add the bot to the TG group
+The purpose of this project is to build a bot capable of process soical media
+post links, harvest its multimedia content (photos, videos) and send that content
+through Telegram. Currently, the system only supports Twitter and Reddit links, but
+we might extend it to other sites, such as Instagram.
 
 To clone this repo, run
 ```
